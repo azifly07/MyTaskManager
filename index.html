@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ふんわり ToDo - タスク管理</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="ホーム">
+        <span class="brand-icon">✿</span>
+        <span>ふんわり ToDo</span>
+      </a>
+
+      <div class="side-label">MENU</div>
+      <nav class="side-nav" aria-label="メインメニュー">
+        <button class="nav-item active" data-filter="all"><span>▦</span> すべてのタスク <span class="nav-count" id="allCount">0</span></button>
+        <button class="nav-item" data-filter="today"><span>☼</span> 今日のタスク <span class="nav-count" id="todayCount">0</span></button>
+        <button class="nav-item" data-filter="upcoming"><span>◷</span> 期限が近いタスク</button>
+        <button class="nav-item" data-filter="completed"><span>✓</span> 完了済み</button>
+      </nav>
+
+      <div class="side-label category-heading">CATEGORIES <button id="addCategoryBtn" class="tiny-plus" title="カテゴリを追加" aria-label="カテゴリを追加">＋</button></div>
+      <div id="categoryList" class="category-list"></div>
+
+      <div class="sidebar-note">
+        <span class="note-sparkle">✧</span>
+        <strong>少しずつで大丈夫。</strong>
+        <p>今日できることから<br>ひとつずつ進めよう。</p>
+      </div>
+      <div class="sidebar-footer">made with ♡</div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="todayLabel">MY PLANNER</p>
+          <h1>おかえりなさい <span>🌷</span></h1>
+          <p class="subtitle">今日も自分のペースで進めていこう。</p>
+        </div>
+        <div class="avatar" aria-label="ユーザーアイコン">☺</div>
+      </header>
+
+      <section class="welcome-card">
+        <div>
+          <p class="welcome-kicker">YOUR DAILY SPACE</p>
+          <h2>やることを整理して、<br>気持ちもすっきり。</h2>
+          <p>小さな一歩の積み重ねが、大きな達成につながるよ。</p>
+        </div>
+        <div class="welcome-art" aria-hidden="true">
+          <span class="art-sun">✺</span><span class="art-flower">✿</span><span class="art-star">✦</span>
+        </div>
+      </section>
+
+      <section class="stats-grid" aria-label="タスクの概要">
+        <article class="stat-card stat-pink">
+          <div class="stat-icon">✎</div><p>すべてのタスク</p><strong id="totalTasks">0</strong><span>登録したタスク</span>
+        </article>
+        <article class="stat-card stat-purple">
+          <div class="stat-icon">♡</div><p>完了したタスク</p><strong id="completedTasks">0</strong><span>よく頑張りました！</span>
+        </article>
+        <article class="stat-card stat-yellow">
+          <div class="stat-icon">◷</div><p>未完了のタスク</p><strong id="remainingTasks">0</strong><span>自分のペースでOK</span>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="task-panel panel">
+          <div class="section-heading">
+            <div><p class="eyebrow">TASK LIST</p><h2 id="listTitle">すべてのタスク</h2></div>
+            <span class="task-total" id="visibleCount">0件</span>
+          </div>
+
+          <form id="taskForm" class="task-form">
+            <label class="sr-only" for="taskInput">タスク名</label>
+            <input id="taskInput" type="text" maxlength="80" placeholder="新しいタスクを入力..." required>
+            <div class="form-row">
+              <label class="sr-only" for="categoryInput">カテゴリ</label>
+              <select id="categoryInput" aria-label="カテゴリ">
+                <option value="大学">🎓 大学</option>
+                <option value="プライベート">🌼 プライベート</option>
+                <option value="仕事">💻 仕事</option>
+                <option value="その他">🧸 その他</option>
+              </select>
+              <label class="sr-only" for="priorityInput">優先度</label>
+              <select id="priorityInput" aria-label="優先度">
+                <option value="medium">優先度：中</option>
+                <option value="high">優先度：高</option>
+                <option value="low">優先度：低</option>
+              </select>
+              <label class="sr-only" for="dueDateInput">期限</label>
+              <input id="dueDateInput" type="date" aria-label="期限">
+              <button class="add-button" type="submit">＋ 追加する</button>
+            </div>
+          </form>
+
+          <div class="filter-row">
+            <div class="filter-tabs" role="group" aria-label="タスクの表示">
+              <button class="filter-tab active" data-status="all">すべて</button>
+              <button class="filter-tab" data-status="active">未完了</button>
+              <button class="filter-tab" data-status="completed">完了済み</button>
+            </div>
+            <select id="sortSelect" class="sort-select" aria-label="並び替え">
+              <option value="created">追加した順</option>
+              <option value="due">期限が近い順</option>
+              <option value="priority">優先度順</option>
+            </select>
+          </div>
+
+          <div id="taskList" class="task-list" aria-live="polite"></div>
+          <div id="emptyState" class="empty-state">
+            <div>🧺</div><strong>タスクはまだありません</strong><p>上の入力欄からタスクを追加してみよう。</p>
+          </div>
+        </div>
+
+        <aside class="right-column">
+          <section class="panel progress-panel">
+            <div class="section-heading"><div><p class="eyebrow">YOUR PROGRESS</p><h2>今日の進捗</h2></div><span>🌱</span></div>
+            <div class="progress-ring-wrap">
+              <div class="progress-ring" id="progressRing"><div><strong id="progressPercent">0%</strong><span>達成率</span></div></div>
+            </div>
+            <p class="progress-message" id="progressMessage">まずはひとつ、始めてみよう！</p>
+            <div class="progress-caption"><span>完了したタスク</span><strong id="progressCount">0 / 0</strong></div>
+          </section>
+
+          <section class="panel tip-panel">
+            <div class="tip-icon">☁</div>
+            <p class="eyebrow">LITTLE REMINDER</p>
+            <h3>休憩も忘れずに。</h3>
+            <p>集中したあとは、深呼吸してひと休み。無理せず進めようね。</p>
+          </section>
+        </aside>
+      </section>
+      <footer class="page-footer">今日の自分に、ちいさな花まるを。 <span>♡</span></footer>
+    </main>
+  </div>
+
+  <dialog id="categoryDialog" class="category-dialog">
+    <form id="categoryForm" method="dialog">
+      <h2>カテゴリを追加</h2>
+      <p>新しいカテゴリ名を入力してください。</p>
+      <input id="newCategoryInput" type="text" maxlength="20" placeholder="例：趣味" required>
+      <div class="dialog-actions">
+        <button type="button" class="secondary-button" id="cancelCategoryBtn">キャンセル</button>
+        <button type="submit" class="add-button">追加する</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
